@@ -131,7 +131,7 @@ services:
       ACTIVEMQ_JMX_LOGIN: jmx
       ACTIVEMQ_JMX_PASSWORD: password
 
-      ACTIVEMQ_STATIC_TOPICS: static-topic-1;static-topic-2;autoTopic
+      ACTIVEMQ_STATIC_TOPICS: static-topic-1;static-topic-2;AutoTopic
       ACTIVEMQ_STATIC_QUEUES: static-queue-1;static-queue-2
       ACTIVEMQ_ENABLED_SCHEDULER: "true"
       ACTIVEMQ_MIN_MEMORY: 512
