@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Slf4j
 @Component
 public class Consumer {
@@ -23,4 +25,5 @@ public class Consumer {
     public void getAutomobileListener3(Automobile automobile) {
         log.info("\u001B[34m" + "Automobile Consumer 3: " + automobile + "\u001B[0m");
     }
+
 }

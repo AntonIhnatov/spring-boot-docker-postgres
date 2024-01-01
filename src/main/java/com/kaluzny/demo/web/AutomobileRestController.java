@@ -2,8 +2,6 @@ package com.kaluzny.demo.web;
 
 import com.kaluzny.demo.domain.Automobile;
 import com.kaluzny.demo.domain.AutomobileRepository;
-import com.kaluzny.demo.exception.AutoWasDeletedException;
-import com.kaluzny.demo.exception.ThereIsNoSuchAutoException;
 import com.kaluzny.demo.service.AutomobileService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -204,7 +202,7 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
 //        return collection;
 //    }
 
-    @GetMapping(value ="/automobiles", params = {"color"} )
+    @GetMapping(value = "/automobiles", params = {"color"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Collection<Automobile>> findAutomobileByColor(
             @Parameter(description = "Name of the Automobile to be obtained. Cannot be empty.", required = true)
@@ -216,7 +214,6 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
         return new ResponseEntity<>(collection, status);
 
     }
-
 
 
 //    @GetMapping(value = "/automobiles", params = {"name", "color"})
@@ -284,6 +281,7 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
         return ResponseEntity.ok(collectionName);
     }
 
+
 //    @Override
 //    @PostMapping("/message")
 //    @ResponseStatus(HttpStatus.CREATED)
@@ -309,4 +307,14 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
         Automobile savedAutomobile = automobileService.saveAndSendMessage(automobile);
         return ResponseEntity.ok(savedAutomobile);
     }
+
+
+    @GetMapping("/color-auto")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<Automobile>> pushMessageColor(@RequestParam String color) {
+        List<Automobile> automobileList = automobileService.findByColorAndSendMessageAndReturn(color);
+        return ResponseEntity.ok(automobileList);
+    }
+
+
 }

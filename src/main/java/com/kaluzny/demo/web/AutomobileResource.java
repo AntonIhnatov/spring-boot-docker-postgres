@@ -29,4 +29,6 @@ public interface AutomobileResource {
     ResponseEntity<Collection<Automobile>> findAutomobileByColorStartsWith(String colorStartsWith, int page, int size);
 
     ResponseEntity<List<String>> getAllAutomobilesByName();
+
+    ResponseEntity<List<Automobile>> pushMessageColor(String color);
 }

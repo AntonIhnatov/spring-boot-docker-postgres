@@ -3,6 +3,7 @@ package com.kaluzny.demo.service;
 import com.kaluzny.demo.domain.Automobile;
 import com.kaluzny.demo.domain.AutomobileRepository;
 import com.kaluzny.demo.exception.AutoWasDeletedException;
+import jakarta.annotation.PostConstruct;
 import jakarta.jms.Connection;
 import jakarta.jms.JMSException;
 import jakarta.jms.Session;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Service;
 import com.kaluzny.demo.exception.ThereIsNoSuchAutoException;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.kaluzny.demo.web.AutomobileRestController.getTiming;
 
@@ -34,8 +32,36 @@ public class AutomobileService {
     @Autowired
     private AutomobileRepository repository;
 
+
+    public List<Automobile> findByColorAndSendMessageAndReturn(String color) {
+        try {
+            log.info("Executing findByColorAndSendMessageAndReturn with color: {}", color);
+
+            List<Automobile> automobilesByColor = repository.findByColor(color);
+
+
+            Topic autoTopic = jmsTemplate.getConnectionFactory().createConnection()
+                    .createSession()
+                    .createTopic("AutoTopic-Color");
+
+            log.info("Sending Automobiles to JMS: {}", automobilesByColor);
+            jmsTemplate.convertAndSend(autoTopic, automobilesByColor);
+
+            log.info("Returning Automobiles: {}", automobilesByColor);
+
+            return automobilesByColor;
+
+        } catch (JMSException e) {
+            log.error("An error occurred while processing JMS operations", e);
+            throw new RuntimeException("Failed to send message", e);
+        }
+    }
+
+
+
     public Automobile saveAndSendMessage(Automobile automobile) {
         try (Connection connection = jmsTemplate.getConnectionFactory().createConnection();
+
              Session session = connection.createSession()) {
 
             Topic autoTopic = session.createTopic("AutoTopic");
@@ -91,8 +117,10 @@ public class AutomobileService {
         Instant start = Instant.now();
         log.info("findAutomobileByColor() - start: time = {}", start);
         log.info("findAutomobileByColor() - start: color = {}", color);
+
         Collection<Automobile> collection = repository.findByColor(color);
         Instant end = Instant.now();
+
         log.info("findAutomobileByColor() - end: milliseconds = {}", getTiming(start, end));
         log.info("findAutomobileByColor() - end: collection = {}", collection);
         return collection;
